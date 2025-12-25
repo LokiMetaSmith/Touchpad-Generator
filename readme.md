@@ -19,6 +19,16 @@ The OpenSCAD script comes courtesy of Texas Instruments. I modified it a bit to 
 Why not generate KiCad files? Mostly because the KiCad file format is really complex and any industry EDA tool including KiCad support the Eagle XML file format so it is usable for more people.
 The Eagle XML file format is also equally openly documented and very easy to read and write. So it is not a proprietary file format even if Eagle itself is not open.
 
+KiCad Compatibility
+-------------------
+The generated board and schematic files are compatible with KiCad (tested with KiCad 8+). To import them:
+1. Open KiCad.
+2. Create a new Project or open an existing one.
+3. In the PCB Editor (Pcbnew), go to `File -> Import -> Eagle Board (.brd)...` and select the generated `Touchpad.brd`.
+4. (Optional) In the Schematic Editor, go to `File -> Import -> Eagle Schematic...` and select `Touchpad.sch`.
+
+*Note:* The template files (`empty.brd`/`empty.sch`) are saved in Eagle 7.7.0 format to ensure maximum compatibility with KiCad's importer, which can sometimes have issues with newer Eagle 9.x files.
+
 Installation
 -----------
 You need OpenSCAD Stable (2021) installed. The nightly version has a broken DXF output (last tested in February 2025) and a recent version of Python 3.
