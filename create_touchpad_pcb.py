@@ -1,4 +1,5 @@
 import math
+import argparse
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 from itertools import tee, islice, chain
@@ -19,9 +20,18 @@ dxf_path = 'touchpad.dxf'
 # we use this file as our basis and add the routed Touchpad to it
 boardFile = 'empty.brd'
 schematicFile = 'empty.sch'
+outputBoardFile = 'Touchpad.brd'
+outputSchematicFile = 'Touchpad.sch'
 
 def parse_dxf_polygons(file_path):
-    doc = ezdxf.readfile(file_path)
+    try:
+        doc = ezdxf.readfile(file_path)
+    except IOError:
+        print(f"Error: Could not read file '{file_path}'")
+        exit(1)
+    except ezdxf.DXFStructureError:
+        print(f"Error: Invalid DXF file '{file_path}'")
+        exit(1)
     msp = doc.modelspace()
 
     lines = []
@@ -173,7 +183,12 @@ def create_row(index, polygons):
     return signal, pad_element
 
 def generate_schematic(rows, columns):
-    tree = ET.parse(schematicFile)
+    try:
+        tree = ET.parse(schematicFile)
+    except FileNotFoundError:
+         print(f"Error: Schematic template '{schematicFile}' not found.")
+         exit(1)
+
     root = tree.getroot()
     parts_element = root.find('.//parts')
     instances_element = root.find('.//instances')
@@ -205,14 +220,46 @@ def generate_schematic(rows, columns):
         segment_element.append(pinref_element)
         net_element.append(segment_element)
         nets_element.append(net_element)
-    tree.write('Touchpad.sch')
-        
-        
-    
-    
+    tree.write(outputSchematicFile)
+
 
 def main():
-    tree = ET.parse(boardFile)
+    global viaSize, viaDrill, viaOffset, traceWidth, polygonLineWidth
+    global dxf_path, boardFile, schematicFile, outputBoardFile, outputSchematicFile
+
+    parser = argparse.ArgumentParser(description='Generate Touchpad PCB files from DXF.')
+    parser.add_argument('--dxf', default='touchpad.dxf', help='Input DXF file (default: touchpad.dxf)')
+    parser.add_argument('--board-template', default='empty.brd', help='Board template file (default: empty.brd)')
+    parser.add_argument('--schematic-template', default='empty.sch', help='Schematic template file (default: empty.sch)')
+    parser.add_argument('--output-board', default='Touchpad.brd', help='Output Board file (default: Touchpad.brd)')
+    parser.add_argument('--output-schematic', default='Touchpad.sch', help='Output Schematic file (default: Touchpad.sch)')
+    
+    parser.add_argument('--via-size', type=float, default=0.4, help='Total width of via with annular ring (mm) (default: 0.4)')
+    parser.add_argument('--via-drill', type=float, default=0.3, help='Via drill diameter (mm) (default: 0.3)')
+    parser.add_argument('--via-offset', type=float, default=0.1, help='Distance from diamond corner to via (mm) (default: 0.1)')
+    parser.add_argument('--trace-width', type=float, default=0.1, help='Width of connecting traces (mm) (default: 0.1)')
+    parser.add_argument('--polygon-line-width', type=float, default=0.005, help='Outer line width of polygon fills (mm) (default: 0.005)')
+
+    args = parser.parse_args()
+
+    dxf_path = args.dxf
+    boardFile = args.board_template
+    schematicFile = args.schematic_template
+    outputBoardFile = args.output_board
+    outputSchematicFile = args.output_schematic
+    
+    viaSize = args.via_size
+    viaDrill = args.via_drill
+    viaOffset = args.via_offset
+    traceWidth = args.trace_width
+    polygonLineWidth = args.polygon_line_width
+
+    try:
+        tree = ET.parse(boardFile)
+    except FileNotFoundError:
+         print(f"Error: Board template '{boardFile}' not found.")
+         exit(1)
+
     root = tree.getroot()
     polygons = []
     
@@ -265,7 +312,7 @@ def main():
     #     if child.tag == 'polygon':
     #         plain_polygons.remove(child)
 
-    tree.write('Touchpad.brd')
+    tree.write(outputBoardFile)
 
 if __name__ == "__main__":
     main()
