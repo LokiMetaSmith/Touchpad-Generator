@@ -124,7 +124,7 @@ def create_column(index, polygons):
     contactref_element = ET.Element('contactref', element=f'COL{index}', pad="P1")
     signal.append(contactref_element)
     for polygon_prev, polygon, polygon_next in previous_and_next(polygons):
-        polygon_element = ET.Element('polygon', width='{:.10f}'.format(polygonLineWidth), layer="1", pour="solid", thermals="no")
+        polygon_element = ET.Element('polygon', width='{:.10f}'.format(polygonLineWidth), layer="1", pour="solid", thermals="no", isolate="0")
         
         for vertex in polygon:
             vertex_element = ET.Element('vertex', x='{:.10f}'.format(vertex[0],8), y='{:.10f}'.format(vertex[1],8))

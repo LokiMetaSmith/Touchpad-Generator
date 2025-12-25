@@ -18,8 +18,10 @@
   - Add test cases for non-rectangular shapes.
 
 ## Low Priority / Future
-- [ ] KiCad Support
+- [x] KiCad Support
   - Investigate generating KiCad files directly or via conversion.
+  - Downgraded `empty.brd` and `empty.sch` to Eagle 7.7.0 format to ensure compatibility with KiCad's importer (which struggles with Eagle 9.x files).
+  - Added `isolate="0"` to generated polygons.
   - This would make the tool usable for a wider audience without Eagle.
 - [ ] Improve Performance
   - Optimize polygon processing if dealing with very large touchpads.
