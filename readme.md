@@ -33,7 +33,7 @@ Installation
 -----------
 You need OpenSCAD Stable (2021) installed. The nightly version has a broken DXF output (last tested in February 2025) and a recent version of Python 3.
 
-`pip install requirements.txt`
+`pip install -r requirements.txt`
 
 Usage
 ------
@@ -44,11 +44,38 @@ Then render the design (the pattern should go from yellow to teal like below) an
 
 ![preview of a generated touchpad](openscad-render.png "Touchpad Render")
 
-Next open the Python script and edit the variables at the top that you care about. This script has no CLI interface. You will mostly care about the via and trace width parameter.
+Next, run `create_touchpad_pcb.py`. By default, the script will look for `touchpad.dxf`, `empty.brd`, and `empty.sch` in the current folder:
 
-The script will look for a `touchpad.dxf` in the same folder.
+```bash
+python create_touchpad_pcb.py
+```
 
-`python create_touchpad_pcb.py`
+### CLI Arguments
+
+You can customize file paths and PCB design parameters via CLI flags:
+
+```bash
+python create_touchpad_pcb.py \
+  --dxf path/to/input.dxf \
+  --board-template empty.brd \
+  --schematic-template empty.sch \
+  --output-board Touchpad.brd \
+  --output-schematic Touchpad.sch \
+  --via-size 0.4 \
+  --via-drill 0.3 \
+  --via-offset 0.1 \
+  --trace-width 0.1 \
+  --polygon-line-width 0.005
+```
+
+Running Tests
+-------------
+
+Run the automated test suite using pytest:
+
+```bash
+pytest
+```
 
 It will generate and insert the routed pattern into the empty.brd/sch design file. You can provide your own if needed, it makes no assumption of what exists in the file.
 
