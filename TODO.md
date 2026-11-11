@@ -9,7 +9,7 @@
   - Check for invalid DXF content.
 
 ## Medium Priority
-- [ ] Add Tests
+- [x] Add Tests
   - Create a dummy DXF for testing.
   - Add unit tests for polygon parsing and logic.
   - Add functional tests to ensure board files are generated correctly.
